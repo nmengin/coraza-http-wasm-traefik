@@ -1,0 +1,15 @@
+# Set up K3S  cluster
+k3d cluster create coraza --port 80:80@loadbalancer --port 443:443@loadbalancer --port 9000:9000@loadbalancer --k3s-arg "--disable=traefik@server:0"
+
+helm repo add traefik https://traefik.github.io/charts
+helm repo update
+
+kubectl create namespace traefik
+
+helm upgrade --install --namespace traefik traefik traefik/traefik -f traefik_values.yaml
+
+# Install whoami
+k apply -f whoami
+
+# Delete cluster
+k3d cluster delete coraza

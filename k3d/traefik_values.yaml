@@ -1,0 +1,20 @@
+ingressRoute:
+  dashboard:
+    matchRule: "PathPrefix(`/dashboard`)"
+    # matchRule: "Host(`dashboard-demo.weekly.demo.traefiklabs.tech`) && PathPrefix(`/api`, `/dashboard`)"
+    entryPoints: 
+      - "web"
+    # middlewares:
+    #   - name: "basic-dashboard"
+experimental:
+  plugins:
+    coraza:
+      moduleName: github.com/jcchavezs/coraza-http-wasm-traefik
+      version: v0.2.0
+
+logs:
+  general:
+    level: DEBUG
+
+image:
+  tag: v3.0.0-rc3
