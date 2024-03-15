@@ -1,17 +1,17 @@
 version: '3.7'
 
 services:
-  traefik_base:
-    image: traefik:v3.0.0-rc1
+  traefik:
+    image: traefik:v3.0.0-rc3
     ports:
       - 8080:80
+      - 8443:443
+      - 8888:8888
     command:
       - "--configFile=/etc/traefik/config-static.yaml"
     volumes:
       - ./:/etc/traefik
-
-  traefik:
-    extends: traefik_base
+      - /var/run/docker.sock:/var/run/docker.sock
     depends_on:
       - httpbin
 
@@ -21,5 +21,10 @@ services:
       - APP_NAME=httpbin
       - MAX_BODY_SIZE=15728640 # 15 MiB
     command: [ "/bin/go-httpbin", "-port", "8000" ]
+    labels:
+      - "traefik.http.routers.httpbin.rule=PathPrefix(`/`)"
+      - "traefik.http.routers.httpbin.entrypoints=websecure,web"
+      - "traefik.http.routers.httpbin.middlewares=waf@file"
+      - "traefik.enable=true"
     ports:
       - 8000:8000

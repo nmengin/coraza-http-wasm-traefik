@@ -1,18 +1,18 @@
 http:
-  routers:
-    httpbin:
-      rule: PathPrefix(`/`)
-      service: httpbin
-      entryPoints:
-        - web
-      middlewares:
-        - waf
+  # routers:
+  #   httpbin:
+  #     rule: PathPrefix(`/`)
+  #     service: httpbin
+  #     entryPoints:
+  #       - web
+  #     middlewares:
+  #       - waf
 
-  services:
-    httpbin:
-      loadBalancer:
-        servers:
-          - url: http://httpbin:8000
+  # services:
+  #   httpbin:
+  #     loadBalancer:
+  #       servers:
+  #         - url: http://httpbin:8000
 
   middlewares:
     waf:
@@ -22,4 +22,6 @@ http:
             - SecRuleEngine On
             - SecDebugLog /dev/stdout
             - SecDebugLogLevel 9
-            - SecRule REQUEST_URI "@streq /admin" "id:101,phase:1,log,deny,status:403"
+            # - SecRule REQUEST_URI "@streq /admin" "id:101,phase:1,log,deny,status:403"
+            - SecRule REQUEST_METHOD "^(?:GET)$" "phase:1,t:none,log,deny,msg:'GET request methods NOT allowed',logdata:%{REQUEST_METHOD}"
+            # - SecRule REQUEST_HEADERS_NAMES "^x-forwarded-for" "log,deny,id:48,status:403,t:lowercase,msg:'Proxy Server Used'"

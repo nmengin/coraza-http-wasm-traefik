@@ -9,10 +9,19 @@ api:
 entryPoints:
   web:
     address: :80
+  websecure:
+    address: :443
+    http:
+      tls: {}
+  traefik:
+    address: :8888
 
 providers:
   file:
+    # To declare the waf without linking to one specific container
     filename: /etc/traefik/config-dynamic.yaml
+  docker:
+    exposedByDefault: false
 
 experimental:
   plugins:
